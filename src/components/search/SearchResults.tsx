@@ -1,5 +1,3 @@
-"use client";
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -7,6 +5,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Search, Heart } from "lucide-react";
 import { Dog } from "@/types";
 import DogCard from "../dog/DogCard";
+import Pagination from "./PaginationComponent";
 
 interface SearchResultsProps {
   // Data
@@ -24,6 +23,7 @@ interface SearchResultsProps {
   // Handlers
   onFavoriteChange: (dogId: string, isFavorite: boolean) => void;
   isFavorite: (dogId: string) => boolean;
+  onPageChange: (page: number) => void;
 }
 
 export default function SearchResults({
@@ -37,6 +37,7 @@ export default function SearchResults({
   favoriteCount,
   onFavoriteChange,
   isFavorite,
+  onPageChange,
 }: SearchResultsProps) {
   
   // Loading skeleton component
@@ -114,15 +115,25 @@ export default function SearchResults({
       {loading ? (
         <LoadingSkeleton />
       ) : dogs.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-6">
-          {dogs.map((dog) => (
-            <DogCard
-              key={dog.id}
-              dog={dog}
-              isFavorite={isFavorite(dog.id)}
-              onFavoriteChange={onFavoriteChange}
-            />
-          ))}
+        <div className="space-y-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-6">
+            {dogs.map((dog) => (
+              <DogCard
+                key={dog.id}
+                dog={dog}
+                isFavorite={isFavorite(dog.id)}
+                onFavoriteChange={onFavoriteChange}
+              />
+            ))}
+          </div>
+          
+          {/* Pagination - now inside the same background */}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={onPageChange}
+            loading={loading}
+          />
         </div>
       ) : hasSearched ? (
         <EmptyState />

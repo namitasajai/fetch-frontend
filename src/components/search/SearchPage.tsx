@@ -9,7 +9,6 @@ import { useFavorites } from "@/hooks/useFavorites";
 import SearchHeader from "./SearchHeader";
 import SearchFilters from "./SearchFilters";
 import SearchResults from "./SearchResults";
-import Pagination from "./PaginationComponent";
 
 export default function SearchPage() {
   const { user, logout } = useAuth();
@@ -115,7 +114,7 @@ export default function SearchPage() {
             isGeneratingMatch={isGeneratingMatch}
           />
 
-          {/* Search Results */}
+          {/* Search Results with integrated pagination */}
           <SearchResults
             dogs={dogs}
             loading={loading}
@@ -127,19 +126,8 @@ export default function SearchPage() {
             favoriteCount={favoriteCount}
             onFavoriteChange={handleFavoriteChange}
             isFavorite={isFavorite}
+            onPageChange={handlePageChange}
           />
-
-          {/* Pagination */}
-          {dogs.length > 0 && (
-            <div className="px-6 pb-6">
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-                loading={loading}
-              />
-            </div>
-          )}
         </div>
       </div>
     </SidebarProvider>
