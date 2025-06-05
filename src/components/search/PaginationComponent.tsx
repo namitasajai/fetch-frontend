@@ -64,7 +64,7 @@ export default function Pagination({
           disabled={loading}
           className={
             page === currentPage
-              ? "bg-gradient-to-r from-blue-600 to-purple-600"
+              ? "bg-primary text-primary-foreground hover:bg-primary/90"
               : ""
           }
           aria-label={`Go to page ${page}`}

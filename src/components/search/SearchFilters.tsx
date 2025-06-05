@@ -81,8 +81,8 @@ export default function SearchFilters({
     if (favoriteCount === 0) {
       return (
         <div className="text-center">
-          <Heart className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-          <p className="text-xs text-gray-500">
+          <Heart className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+          <p className="text-xs text-muted-foreground">
             Like some dogs to get started!
           </p>
         </div>
@@ -93,7 +93,7 @@ export default function SearchFilters({
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Heart className="w-4 h-4 text-red-500 fill-current" />
+            <Heart className="w-4 h-4 text-primary fill-current" />
             <span className="text-sm font-medium">
               Favorites ({favoriteCount})
             </span>
@@ -103,14 +103,14 @@ export default function SearchFilters({
               variant="ghost"
               size="sm"
               onClick={onClearFavorites}
-              className="h-6 px-2 text-xs text-gray-500 hover:text-red-500"
+              className="h-6 px-2 text-xs text-muted-foreground hover:text-destructive"
             >
               <Trash2 className="w-3 h-3" />
             </Button>
           )}
         </div>
         
-        <p className="text-xs text-gray-600">
+        <p className="text-xs text-muted-foreground">
           Ready to find your perfect match?
         </p>
         
@@ -118,7 +118,7 @@ export default function SearchFilters({
           onClick={onGenerateMatch}
           disabled={isGeneratingMatch}
           size="sm"
-          className="w-full bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600"
+          className="w-full bg-primary hover:bg-primary/90"
         >
           <Sparkles className="w-4 h-4 mr-2" />
           {isGeneratingMatch ? "Finding Match..." : "Generate Match"}
@@ -131,21 +131,21 @@ export default function SearchFilters({
     <Sidebar className="border-r">
       <SidebarHeader className="border-b px-6 py-4">
         <div className="flex items-center gap-2">
-          <ListFilter className="w-5 h-5 text-blue-600" />
-          <h2 className="text-lg font-semibold">Filters</h2>
+          <ListFilter className="w-5 h-5 text-primary" />
+          <h2 className="text-md font-semibold">Filter & Sort</h2>
         </div>
       </SidebarHeader>
 
       <SidebarContent className="px-6 py-4 space-y-6">
         {/* Breed Selection */}
         <div className="space-y-3">
-          <Label className="text-sm font-medium text-gray-900">
+          <Label className="text-sm font-medium text-foreground">
             Breeds
           </Label>
 
           {/* Breed Search Input */}
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               placeholder="Search breeds..."
               value={breedSearch}
@@ -158,7 +158,7 @@ export default function SearchFilters({
           {/* Selected Breeds */}
           {selectedBreeds.length > 0 && (
             <div className="space-y-2">
-              <Label className="text-xs text-gray-500">Selected:</Label>
+              <Label className="text-xs text-muted-foreground">Selected:</Label>
               <div className="flex flex-wrap gap-2">
                 {selectedBreeds.map((breed) => (
                   <Badge
@@ -169,7 +169,7 @@ export default function SearchFilters({
                     {breed}
                     <button
                       type="button"
-                      className="ml-1 hover:text-red-500 focus:outline-none"
+                      className="ml-1 hover:text-destructive focus:outline-none"
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -186,11 +186,11 @@ export default function SearchFilters({
 
           {/* Breed Suggestions */}
           {breedSearch && filteredBreeds.length > 0 && (
-            <div className="max-h-32 overflow-y-auto border rounded-md bg-white">
+            <div className="max-h-32 overflow-y-auto border rounded-md bg-card">
               {filteredBreeds.slice(0, 8).map((breed) => (
                 <div
                   key={breed}
-                  className="p-2 hover:bg-gray-50 cursor-pointer text-sm border-b last:border-b-0"
+                  className="p-2 hover:bg-accent hover:text-accent-foreground cursor-pointer text-sm border-b last:border-b-0"
                   onClick={() => addBreed(breed)}
                 >
                   {breed}
@@ -204,12 +204,12 @@ export default function SearchFilters({
 
         {/* Age Range */}
         <div className="space-y-3">
-          <Label className="text-sm font-medium text-gray-900">
+          <Label className="text-sm font-medium text-foreground">
             Age Range
           </Label>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label htmlFor="ageMin" className="text-xs text-gray-500">
+              <Label htmlFor="ageMin" className="text-xs text-muted-foreground">
                 Min
               </Label>
               <Input
@@ -225,7 +225,7 @@ export default function SearchFilters({
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="ageMax" className="text-xs text-gray-500">
+              <Label htmlFor="ageMax" className="text-xs text-muted-foreground">
                 Max
               </Label>
               <Input
@@ -246,7 +246,7 @@ export default function SearchFilters({
 
         {/* Sort By */}
         <div className="space-y-3">
-          <Label className="text-sm font-medium text-gray-900">
+          <Label className="text-sm font-medium text-foreground">
             Sort By
           </Label>
           <Select
@@ -273,7 +273,7 @@ export default function SearchFilters({
           <Button
             onClick={onSearch}
             disabled={loading}
-            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+            className="w-full"
           >
             <Search className="w-4 h-4 mr-2" />
             Search Dogs

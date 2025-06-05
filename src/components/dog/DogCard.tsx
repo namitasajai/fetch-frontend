@@ -24,7 +24,7 @@ export default function DogCard({ dog, isFavorite, onFavoriteChange }: DogCardPr
   };
 
   return (
-    <Card className="group rounded-none py-0 shadow-none overflow-hidden border-0 transition-all duration-300 hover:-translate-y-1 bg-white relative">
+    <Card className="group rounded-none py-0 shadow-none overflow-hidden border-0 transition-all duration-300 hover:-translate-y-1 bg-card relative">
       <div className="relative aspect-square overflow-hidden">
         {imageLoading && (
           <Skeleton className="absolute inset-0 w-full h-full" />
@@ -55,8 +55,8 @@ export default function DogCard({ dog, isFavorite, onFavoriteChange }: DogCardPr
           onClick={handleFavoriteToggle}
           className={`absolute top-3 right-3 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 z-10 ${
             isFavorite 
-              ? 'bg-red-500 shadow-lg' 
-              : 'bg-white/90 backdrop-blur-sm hover:bg-white shadow-md'
+              ? 'bg-destructive shadow-lg' 
+              : 'bg-card/90 backdrop-blur-sm hover:bg-card border border-border shadow-md'
           }`}
           aria-label={isFavorite ? `Remove ${dog.name} from favorites` : `Add ${dog.name} to favorites`}
         >
@@ -64,7 +64,7 @@ export default function DogCard({ dog, isFavorite, onFavoriteChange }: DogCardPr
             className={`w-5 h-5 transition-all duration-200 ${
               isFavorite 
                 ? 'text-white fill-white' 
-                : 'text-gray-600 hover:text-red-500'
+                : 'text-muted-foreground hover:text-destructive'
             }`}
           />
         </button>
@@ -72,22 +72,22 @@ export default function DogCard({ dog, isFavorite, onFavoriteChange }: DogCardPr
 
       <CardContent className="p-4 space-y-3">
         {/* Dog Name */}
-        <h3 className="font-semibold text-lg text-gray-900 truncate">
+        <h3 className="font-semibold text-lg text-foreground truncate">
           {dog.name}
         </h3>
 
         {/* Breed and Age */}
         <div className="flex flex-wrap gap-2">
-          <Badge variant="default" className="bg-blue-100 text-blue-800 hover:bg-blue-200">
+          <Badge variant="default" className="bg-primary/10 text-primary-foreground border-primary/20">
             {dog.breed}
           </Badge>
-          <Badge variant="outline" className="text-gray-600">
+          <Badge variant="outline" className="text-muted-foreground">
             {dog.age} {dog.age === 1 ? 'year' : 'years'} old
           </Badge>
         </div>
 
         {/* Location */}
-        <div className="flex items-center gap-1 text-sm text-gray-500">
+        <div className="flex items-center gap-1 text-sm text-muted-foreground">
           <MapPin className="w-4 h-4" />
           <span>ZIP {dog.zip_code}</span>
         </div>

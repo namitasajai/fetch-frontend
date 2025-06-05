@@ -46,15 +46,15 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/10 p-4">
       <div className="w-full max-w-md space-y-8">
         {/* Header with animated dog icon */}
         <div className="text-center space-y-4">
-          <div className="mx-auto w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
-            <Dog className="w-10 h-10 text-white" />
+          <div className="mx-auto w-20 h-20 bg-primary rounded-2xl flex items-center justify-center shadow-lg">
+            <Dog className="w-10 h-10 text-primary-foreground" />
           </div>
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold tracking-tight text-primary">
               Find Your Perfect Dog
             </h1>
             <p className="text-muted-foreground">
@@ -64,9 +64,9 @@ export default function LoginForm() {
         </div>
 
         {/* Login Card */}
-        <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+        <Card className="border shadow-xl bg-card/90 backdrop-blur-sm">
           <CardHeader className="space-y-1 pb-4">
-            <CardTitle className="text-2xl font-semibold text-center">
+            <CardTitle className="text-2xl font-semibold text-center text-card-foreground">
               Get Started
             </CardTitle>
             <CardDescription className="text-center">
@@ -114,7 +114,7 @@ export default function LoginForm() {
 
               <Button
                 type="submit"
-                className="w-full h-11 text-base font-medium bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-all duration-200"
+                className="w-full h-11 text-base font-medium"
                 disabled={loading}
               >
                 {loading ? (

@@ -62,11 +62,11 @@ export default function SearchResults({
   // Empty state component
   const EmptyState = () => (
     <div className="text-center py-16 space-y-4">
-      <div className="mx-auto w-24 h-24 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center">
-        <Search className="w-12 h-12 text-gray-400" />
+      <div className="mx-auto w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center">
+        <Search className="w-12 h-12 text-muted-foreground" />
       </div>
-      <h3 className="text-xl font-semibold text-gray-900">No dogs found</h3>
-      <p className="text-gray-500 max-w-md mx-auto">
+      <h3 className="text-xl font-semibold text-foreground">No dogs found</h3>
+      <p className="text-muted-foreground max-w-md mx-auto">
         Try adjusting your search filters to discover more adorable companions
         waiting for their forever home!
       </p>
@@ -74,7 +74,7 @@ export default function SearchResults({
   );
 
   return (
-    <main className="flex-1 p-6 overflow-auto bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <main className="flex-1 p-6 overflow-auto bg-gradient-to-br from-primary/5 via-background to-accent/5">
       {error && (
         <Alert variant="destructive" className="mb-6">
           <AlertDescription>{error}</AlertDescription>
@@ -85,7 +85,7 @@ export default function SearchResults({
       {hasSearched && !loading && (
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
-            <h2 className="text-lg font-semibold text-gray-900">
+            <h2 className="text-lg font-semibold text-foreground">
               {totalResults > 0 ? (
                 <>Found {totalResults.toLocaleString()} adorable dogs</>
               ) : (
@@ -104,7 +104,7 @@ export default function SearchResults({
           </div>
 
           {totalPages > 1 && (
-            <p className="text-sm text-gray-500 hidden sm:block">
+            <p className="text-sm text-muted-foreground hidden sm:block">
               Page {currentPage} of {totalPages}
             </p>
           )}
