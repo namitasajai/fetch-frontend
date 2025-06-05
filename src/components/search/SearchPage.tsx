@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -37,11 +37,11 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { SearchParams } from "@/types";
 import { api } from "@/services/api";
 import { toast } from "sonner";
 import DogCard from "../dog/DogCard";
 import { useSearch } from "@/hooks/useSearch";
+import { useFilters } from "@/hooks/useFilters";
 
 export default function SearchPage() {
   const { user, logout } = useAuth();
@@ -59,65 +59,35 @@ export default function SearchPage() {
     handlePageChange
   } = useSearch();
 
+  // Use the custom filters hook
+  const {
+    selectedBreeds,
+    breedSearch,
+    filteredBreeds,
+    ageMin,
+    ageMax,
+    sortBy,
+    setBreedSearch,
+    addBreed,
+    removeBreed,
+    setAgeMin,
+    setAgeMax,
+    setSortBy,
+    getSearchParams,
+    resetFilters
+  } = useFilters();
+
   // Favorites state (will be moved to useFavorites later)
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
 
-  // Filter states (will be moved to useFilters later)
-  const [breeds, setBreeds] = useState<string[]>([]);
-  const [selectedBreeds, setSelectedBreeds] = useState<string[]>([]);
-  const [ageMin, setAgeMin] = useState("");
-  const [ageMax, setAgeMax] = useState("");
-  const [sortBy, setSortBy] = useState("breed:asc");
-  const [breedSearch, setBreedSearch] = useState("");
-
-  useEffect(() => {
-    const fetchBreeds = async () => {
-      try {
-        const breedsList = await api.getBreeds();
-        setBreeds(breedsList.sort());
-      } catch (error) {
-        console.error("Failed to fetch breeds:", error);
-      }
-    };
-    fetchBreeds();
-  }, []);
-
-  const filteredBreeds = breeds.filter(
-    (breed) =>
-      breed.toLowerCase().includes(breedSearch.toLowerCase()) &&
-      !selectedBreeds.includes(breed)
-  );
-
   const handleFiltersChange = () => {
-    const filters: SearchParams = {
-      breeds: selectedBreeds.length > 0 ? selectedBreeds : undefined,
-      ageMin: ageMin ? parseInt(ageMin) : undefined,
-      ageMax: ageMax ? parseInt(ageMax) : undefined,
-      sort: sortBy,
-      size: 25,
-    };
+    const filters = getSearchParams();
     handleSearch(filters, 1);
   };
 
   const handleResetFilters = () => {
-    setSelectedBreeds([]);
-    setAgeMin("");
-    setAgeMax("");
-    setSortBy("breed:asc");
-    setBreedSearch("");
+    resetFilters();
     handleSearch({ sort: "breed:asc", size: 25 }, 1);
-  };
-
-  const addBreed = (breed: string) => {
-    if (!selectedBreeds.includes(breed)) {
-      setSelectedBreeds([...selectedBreeds, breed]);
-    }
-    setBreedSearch("");
-  };
-
-  const removeBreed = (breed: string) => {
-    console.log('Removing breed:', breed); // Debug log
-    setSelectedBreeds(selectedBreeds.filter((b) => b !== breed));
   };
 
   const handleFavoriteChange = (dogId: string, isFavorite: boolean) => {
