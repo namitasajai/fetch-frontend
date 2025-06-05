@@ -31,42 +31,44 @@ import {
   ChevronLeft,
   ChevronRight,
   Sparkles,
-  PawPrint,
   Dog as DogIcon,
   ListFilter,
   X,
   RotateCcw,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { Dog, SearchParams } from "@/types";
+import { SearchParams } from "@/types";
 import { api } from "@/services/api";
 import { toast } from "sonner";
 import DogCard from "../dog/DogCard";
+import { useSearch } from "@/hooks/useSearch";
 
 export default function SearchPage() {
   const { user, logout } = useAuth();
-  const [dogs, setDogs] = useState<Dog[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [favorites, setFavorites] = useState<Set<string>>(new Set());
-  const [totalResults, setTotalResults] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchParams, setSearchParams] = useState<SearchParams>({
-    sort: "breed:asc",
-    size: 25,
-  });
-  const [hasSearched, setHasSearched] = useState(false);
+  
+  // Use the custom search hook
+  const {
+    dogs,
+    loading,
+    error,
+    totalResults,
+    currentPage,
+    hasSearched,
+    totalPages,
+    handleSearch,
+    handlePageChange
+  } = useSearch();
 
-  // Filter states
+  // Favorites state (will be moved to useFavorites later)
+  const [favorites, setFavorites] = useState<Set<string>>(new Set());
+
+  // Filter states (will be moved to useFilters later)
   const [breeds, setBreeds] = useState<string[]>([]);
   const [selectedBreeds, setSelectedBreeds] = useState<string[]>([]);
   const [ageMin, setAgeMin] = useState("");
   const [ageMax, setAgeMax] = useState("");
   const [sortBy, setSortBy] = useState("breed:asc");
   const [breedSearch, setBreedSearch] = useState("");
-
-  const pageSize = 25;
-  const totalPages = Math.ceil(totalResults / pageSize);
 
   useEffect(() => {
     const fetchBreeds = async () => {
@@ -80,53 +82,11 @@ export default function SearchPage() {
     fetchBreeds();
   }, []);
 
-  useEffect(() => {
-    handleSearch();
-  }, []);
-
   const filteredBreeds = breeds.filter(
     (breed) =>
       breed.toLowerCase().includes(breedSearch.toLowerCase()) &&
       !selectedBreeds.includes(breed)
   );
-
-  const handleSearch = async (params?: SearchParams, page: number = 1) => {
-    setLoading(true);
-    setError("");
-
-    try {
-      const searchParameters = params || searchParams;
-      const from = page > 1 ? ((page - 1) * pageSize).toString() : undefined;
-
-      const searchResponse = await api.searchDogs({
-        ...searchParameters,
-        from,
-      });
-
-      if (searchResponse.resultIds.length > 0) {
-        const dogsData = await api.getDogs(searchResponse.resultIds);
-        setDogs(dogsData);
-      } else {
-        setDogs([]);
-      }
-
-      setTotalResults(searchResponse.total);
-      setCurrentPage(page);
-      setHasSearched(true);
-
-      if (params) {
-        setSearchParams(params);
-      }
-    } catch (err) {
-      setError(
-        "Failed to search dogs. Please check your connection and try again."
-      );
-      console.error("Search error:", err);
-      toast.error("Search failed");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleFiltersChange = () => {
     const filters: SearchParams = {
@@ -156,12 +116,8 @@ export default function SearchPage() {
   };
 
   const removeBreed = (breed: string) => {
+    console.log('Removing breed:', breed); // Debug log
     setSelectedBreeds(selectedBreeds.filter((b) => b !== breed));
-  };
-
-  const handlePageChange = (page: number) => {
-    handleSearch(searchParams, page);
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleFavoriteChange = (dogId: string, isFavorite: boolean) => {
@@ -338,10 +294,17 @@ export default function SearchPage() {
                         className="flex items-center gap-1 text-xs"
                       >
                         {breed}
-                        <X
-                          className="w-3 h-3 cursor-pointer hover:text-red-500"
-                          onClick={() => removeBreed(breed)}
-                        />
+                        <button
+                          type="button"
+                          className="ml-1 hover:text-red-500 focus:outline-none"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            removeBreed(breed);
+                          }}
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
                       </Badge>
                     ))}
                   </div>
