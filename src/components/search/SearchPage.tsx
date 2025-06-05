@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -35,18 +34,19 @@ import {
   ListFilter,
   X,
   RotateCcw,
+  Trash2,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { api } from "@/services/api";
 import { toast } from "sonner";
 import DogCard from "../dog/DogCard";
 import { useSearch } from "@/hooks/useSearch";
 import { useFilters } from "@/hooks/useFilters";
+import { useFavorites } from "@/hooks/useFavorites";
 
 export default function SearchPage() {
   const { user, logout } = useAuth();
   
-  // Use the custom search hook
+  // Use custom hooks
   const {
     dogs,
     loading,
@@ -59,7 +59,6 @@ export default function SearchPage() {
     handlePageChange
   } = useSearch();
 
-  // Use the custom filters hook
   const {
     selectedBreeds,
     breedSearch,
@@ -77,8 +76,14 @@ export default function SearchPage() {
     resetFilters
   } = useFilters();
 
-  // Favorites state (will be moved to useFavorites later)
-  const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const {
+    favoriteCount,
+    isFavorite,
+    toggleFavorite,
+    generateMatch,
+    isGeneratingMatch,
+    clearFavorites
+  } = useFavorites();
 
   const handleFiltersChange = () => {
     const filters = getSearchParams();
@@ -90,40 +95,13 @@ export default function SearchPage() {
     handleSearch({ sort: "breed:asc", size: 25 }, 1);
   };
 
-  const handleFavoriteChange = (dogId: string, isFavorite: boolean) => {
-    const newFavorites = new Set(favorites);
-    if (isFavorite) {
-      newFavorites.add(dogId);
-    } else {
-      newFavorites.delete(dogId);
-    }
-    setFavorites(newFavorites);
+  const handleFavoriteChange = (dogId: string, isFavoriteNow: boolean) => {
+    const dog = dogs.find(d => d.id === dogId);
+    toggleFavorite(dogId, dog?.name);
   };
 
   const handleGenerateMatch = async () => {
-    if (favorites.size === 0) {
-      toast.error("Please add some dogs to your favorites first! 💖");
-      return;
-    }
-
-    toast.loading("Finding your perfect match...", { id: "match-loading" });
-
-    try {
-      const favoriteIds = Array.from(favorites);
-      const matchResponse = await api.generateMatch(favoriteIds);
-
-      const matchedDogs = await api.getDogs([matchResponse.match]);
-      const matchedDog = matchedDogs[0];
-
-      toast.success(`🎉 Perfect match found: ${matchedDog.name}!`, {
-        id: "match-loading",
-      });
-    } catch (err) {
-      toast.error("Failed to generate match. Please try again.", {
-        id: "match-loading",
-      });
-      console.error("Match error:", err);
-    }
+    await generateMatch();
   };
 
   const handleLogout = async () => {
@@ -131,7 +109,7 @@ export default function SearchPage() {
     toast.success("Logged out successfully");
   };
 
-  // Loading skeleton
+  // Loading skeleton component
   const LoadingSkeleton = () => (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-6">
       {Array.from({ length: 9 }).map((_, i) => (
@@ -150,7 +128,7 @@ export default function SearchPage() {
     </div>
   );
 
-  // Empty state
+  // Empty state component
   const EmptyState = () => (
     <div className="text-center py-16 space-y-4">
       <div className="mx-auto w-24 h-24 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center">
@@ -221,10 +199,61 @@ export default function SearchPage() {
     );
   };
 
+  // Favorites section component
+  const FavoritesSection = () => {
+    if (favoriteCount === 0) {
+      return (
+        <div className="text-center">
+          <Heart className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+          <p className="text-xs text-gray-500">
+            Like some dogs to get started!
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Heart className="w-4 h-4 text-red-500 fill-current" />
+            <span className="text-sm font-medium">
+              Favorites ({favoriteCount})
+            </span>
+          </div>
+          {favoriteCount > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearFavorites}
+              className="h-6 px-2 text-xs text-gray-500 hover:text-red-500"
+            >
+              <Trash2 className="w-3 h-3" />
+            </Button>
+          )}
+        </div>
+        
+        <p className="text-xs text-gray-600">
+          Ready to find your perfect match?
+        </p>
+        
+        <Button
+          onClick={handleGenerateMatch}
+          disabled={isGeneratingMatch}
+          size="sm"
+          className="w-full bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600"
+        >
+          <Sparkles className="w-4 h-4 mr-2" />
+          {isGeneratingMatch ? "Finding Match..." : "Generate Match"}
+        </Button>
+      </div>
+    );
+  };
+
   return (
     <SidebarProvider>
       <div className="flex h-screen w-full">
-        {/* Sidebar with Direct Filters */}
+        {/* Sidebar with Filters */}
         <Sidebar className="border-r">
           <SidebarHeader className="border-b px-6 py-4">
             <div className="flex items-center gap-2">
@@ -389,34 +418,7 @@ export default function SearchPage() {
 
           {/* Favorites in Footer */}
           <SidebarFooter className="border-t px-6 py-4">
-            {favorites.size > 0 ? (
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Heart className="w-4 h-4 text-red-500 fill-current" />
-                  <span className="text-sm font-medium">
-                    Favorites ({favorites.size})
-                  </span>
-                </div>
-                <p className="text-xs text-gray-600">
-                  Ready to find your perfect match?
-                </p>
-                <Button
-                  onClick={handleGenerateMatch}
-                  size="sm"
-                  className="w-full bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600"
-                >
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  Generate Match
-                </Button>
-              </div>
-            ) : (
-              <div className="text-center">
-                <Heart className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                <p className="text-xs text-gray-500">
-                  Like some dogs to get started!
-                </p>
-              </div>
-            )}
+            <FavoritesSection />
           </SidebarFooter>
         </Sidebar>
 
@@ -435,15 +437,18 @@ export default function SearchPage() {
               </div>
 
               <div className="flex items-center gap-2 sm:gap-4">
-                {favorites.size > 0 && (
+                {favoriteCount > 0 && (
                   <Button
                     onClick={handleGenerateMatch}
+                    disabled={isGeneratingMatch}
                     size="sm"
                     className="bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600"
                   >
                     <Sparkles className="w-4 h-4 sm:mr-2" />
-                    <span className="hidden sm:inline">Match</span>
-                    <span className="ml-1">({favorites.size})</span>
+                    <span className="hidden sm:inline">
+                      {isGeneratingMatch ? "Finding..." : "Match"}
+                    </span>
+                    <span className="ml-1">({favoriteCount})</span>
                   </Button>
                 )}
 
@@ -451,7 +456,8 @@ export default function SearchPage() {
                   <LogOut className="w-4 h-4 sm:mr-2" />
                   <span className="hidden sm:inline">Logout</span>
                 </Button>
-                 <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
                   <DogIcon className="w-6 h-6 text-white" />
                 </div>
               </div>
@@ -477,13 +483,13 @@ export default function SearchPage() {
                       <>No dogs found</>
                     )}
                   </h2>
-                  {favorites.size > 0 && (
+                  {favoriteCount > 0 && (
                     <Badge
                       variant="secondary"
                       className="flex items-center gap-1"
                     >
                       <Heart className="w-3 h-3 fill-current" />
-                      {favorites.size} favorite{favorites.size !== 1 ? "s" : ""}
+                      {favoriteCount} favorite{favoriteCount !== 1 ? "s" : ""}
                     </Badge>
                   )}
                 </div>
@@ -506,7 +512,7 @@ export default function SearchPage() {
                     <DogCard
                       key={dog.id}
                       dog={dog}
-                      isFavorite={favorites.has(dog.id)}
+                      isFavorite={isFavorite(dog.id)}
                       onFavoriteChange={handleFavoriteChange}
                     />
                   ))}

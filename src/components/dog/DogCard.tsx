@@ -7,7 +7,6 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Heart, MapPin } from 'lucide-react';
 import { Dog } from '@/types';
-import { toast } from 'sonner';
 
 interface DogCardProps {
   dog: Dog;
@@ -20,12 +19,8 @@ export default function DogCard({ dog, isFavorite, onFavoriteChange }: DogCardPr
   const [imageError, setImageError] = useState(false);
 
   const handleFavoriteToggle = () => {
+    // Simply toggle the favorite state - no toasts here, handled by useFavorites hook
     onFavoriteChange(dog.id, !isFavorite);
-    if (!isFavorite) {
-      toast.success(`Added ${dog.name} to favorites! 💖`);
-    } else {
-      toast(`Removed ${dog.name} from favorites`);
-    }
   };
 
   return (
@@ -63,6 +58,7 @@ export default function DogCard({ dog, isFavorite, onFavoriteChange }: DogCardPr
               ? 'bg-red-500 shadow-lg' 
               : 'bg-white/90 backdrop-blur-sm hover:bg-white shadow-md'
           }`}
+          aria-label={isFavorite ? `Remove ${dog.name} from favorites` : `Add ${dog.name} to favorites`}
         >
           <Heart 
             className={`w-5 h-5 transition-all duration-200 ${
