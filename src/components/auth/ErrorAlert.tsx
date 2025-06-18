@@ -8,7 +8,7 @@ export default function ErrorAlert({ error }: ErrorAlertProps) {
   if (!error) return null;
 
   return (
-    <Alert variant="destructive">
+    <Alert className="border-none p-0" variant="destructive">
       <AlertDescription>{error}</AlertDescription>
     </Alert>
   );

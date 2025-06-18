@@ -7,7 +7,7 @@ interface UseFiltersReturn {
     breeds: string[];
     selectedBreeds: string[];
     breedSearch: string;
-    filteredBreeds: string[];
+    filteredBreeds: string[]; // excludes selected
     ageMin: string;
     ageMax: string;
     sortBy: string;
