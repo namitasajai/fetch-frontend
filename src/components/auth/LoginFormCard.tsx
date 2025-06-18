@@ -13,7 +13,7 @@ export default function LoginFormCard({
   description = "Discover new companions waiting for their forever home"
 }: LoginFormCardProps) {
   return (
-    <Card className="border shadow-xl bg-card/90 backdrop-blur-sm">
+    <Card className="border shadow-xl bg-card">
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl font-semibold text-center text-card-foreground">
           {title}

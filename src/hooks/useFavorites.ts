@@ -6,8 +6,6 @@ import { toast } from 'sonner';
 interface UseFavoritesReturn {
     favorites: Set<string>;
     favoriteCount: number;
-    addToFavorites: (dogId: string, dogName?: string) => void;
-    removeFromFavorites: (dogId: string, dogName?: string) => void;
     toggleFavorite: (dogId: string, dogName?: string) => void;
     clearFavorites: () => void;
     isFavorite: (dogId: string) => boolean;
@@ -46,14 +44,6 @@ export function useFavorites(): UseFavoritesReturn {
         }
     };
 
-    const addToFavorites = (dogId: string, dogName?: string) => {
-        updateFavorites(dogId, 'add', dogName);
-    };
-
-    const removeFromFavorites = (dogId: string, dogName?: string) => {
-        updateFavorites(dogId, 'remove', dogName);
-    };
-
     const toggleFavorite = useCallback((dogId: string, dogName?: string) => {
         const isCurrentlyFavorite = favorites.has(dogId);
         const action = isCurrentlyFavorite ? 'remove' : 'add';
@@ -76,8 +66,7 @@ export function useFavorites(): UseFavoritesReturn {
 
     const closeMatchDialog = useCallback(() => {
         setIsMatchDialogOpen(false);
-        // Reset matched dog after closing dialog
-        setTimeout(() => setMatchedDog(null), 300);
+        setMatchedDog(null);
     }, []);
 
     const generateMatch = useCallback(async (): Promise<void> => {
@@ -109,8 +98,6 @@ export function useFavorites(): UseFavoritesReturn {
     return {
         favorites,
         favoriteCount,
-        addToFavorites,
-        removeFromFavorites,
         toggleFavorite,
         clearFavorites,
         isFavorite,

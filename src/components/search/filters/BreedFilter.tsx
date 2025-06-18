@@ -61,7 +61,7 @@ export default function BreedFilter({
             value={breedSearch}
             onChange={(e) => onBreedSearchChange(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="pl-10 pr-10"
+            className="px-10"
             disabled={loading}
           />
         </div>

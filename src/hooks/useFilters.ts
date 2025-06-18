@@ -23,7 +23,6 @@ interface UseFiltersReturn {
     toggleNearby: (onComplete?: (zipCodes?: string[]) => void) => Promise<void>;
     getSearchParams: () => SearchParams;
     resetFilters: () => void;
-    hasActiveFilters: boolean;
 }
 
 export function useFilters(): UseFiltersReturn {
@@ -99,6 +98,8 @@ export function useFilters(): UseFiltersReturn {
 
     const toggleNearby = async (onComplete?: (zipCodes?: string[]) => void) => {
         const isCurrentlyNearby = showNearby;
+
+        // If already showing nearby, reset filters
         if (isCurrentlyNearby) {
             setShowNearby(false);
             setNearbyZipCodes([]);
@@ -107,6 +108,7 @@ export function useFilters(): UseFiltersReturn {
             onComplete?.([]);
             return;
         }
+        // Otherwise, fetch nearby zip codes
         setLocationLoading(true);
         try {
             const location = await getUserLocation();
@@ -151,17 +153,6 @@ export function useFilters(): UseFiltersReturn {
                 !selectedBreeds.includes(breed)
         );
     }, [breeds, breedSearch, selectedBreeds]);
-
-    // Check if any filters are active
-    const hasActiveFilters = useMemo(() => {
-        return (
-            selectedBreeds.length > 0 ||
-            ageMin !== "" ||
-            ageMax !== "" ||
-            sortBy !== "breed:asc" ||
-            showNearby
-        );
-    }, [selectedBreeds, ageMin, ageMax, sortBy, showNearby]);
 
     const addBreed = (breed: string) => {
         if (!selectedBreeds.includes(breed)) {
@@ -215,6 +206,5 @@ export function useFilters(): UseFiltersReturn {
         toggleNearby,
         getSearchParams,
         resetFilters,
-        hasActiveFilters,
     };
 }

@@ -7,7 +7,7 @@ import { ThemeProvider } from "next-themes";
 
 const inter = Inter({ 
   subsets: ["latin"],
-  variable: "--font-geist-sans",
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {

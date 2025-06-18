@@ -47,8 +47,6 @@ export interface LocationSearchParams {
     right?: number;
     bottom_left?: { lat: number; lon: number };
     top_right?: { lat: number; lon: number };
-    bottom_right?: { lat: number; lon: number };
-    top_left?: { lat: number; lon: number };
   };
   size?: number;
   from?: string;
@@ -57,6 +55,4 @@ export interface LocationSearchParams {
 export interface LocationSearchResponse {
   results: Location[];
   total: number;
-  next?: string;
-  prev?: string;
 }

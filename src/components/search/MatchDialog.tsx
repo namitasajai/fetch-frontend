@@ -24,7 +24,7 @@ export default function MatchDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-auto min-w-80 max-w-sm p-0 overflow-hidden bg-background border-none rounded-2xl shadow-xl">
+      <DialogContent className="w-auto min-w-80 sm:min-w-90 max-w-sm p-0 overflow-hidden bg-background border-none rounded-2xl shadow-xl">
         <DialogTitle className="sr-only">Match Found - {matchedDog.name}</DialogTitle>
         
         {/* Header */}
@@ -36,7 +36,7 @@ export default function MatchDialog({
         </div>
 
         {/* Dog profile */}
-        <div className="px-4 pb-6 space-y-4">
+        <div className="px-6 pb-6 space-y-4">
           <div className="relative h-60 mx-auto rounded-2xl overflow-hidden shadow-lg">
             <Image
               src={matchedDog.img}

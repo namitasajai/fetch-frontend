@@ -62,12 +62,12 @@ export default function SearchPage() {
 
   const handleFiltersChange = () => {
     const filters = getSearchParams();
-    handleSearch(filters, 1);
+    handleSearch(filters, 1); // Reset to page 1
   };
 
   const handleResetFilters = () => {
     resetFilters();
-    handleSearch({ sort: "breed:asc", size: 25 }, 1);
+    handleSearch({ sort: "breed:asc", size: 25 }, 1); // Reset to page 1
   };
 
   const handleFavoriteChange = (dogId: string) => {
@@ -80,31 +80,19 @@ export default function SearchPage() {
   };
 
   const handleLogout = async () => {
+    resetFilters();
     await logout();
     toast.success("Logged out successfully");
   };
 
-  const handleToggleNearby = async () => {
-    const wasNearbyOn = showNearby;
-    
-    if (wasNearbyOn) {
-      await toggleNearby();
+  const handleToggleNearby = async () => { 
+    await toggleNearby((zipCodes?: string[]) => {
       const filters = {
-        ...getSearchParams(),
-        zipCodes: undefined
-      };
-      handleSearch(filters, 1);
-    } else {
-      await toggleNearby((zipCodes?: string[]) => {
-        if (zipCodes && zipCodes.length > 0) {
-          const filters = {
-            ...getSearchParams(),
-            zipCodes: zipCodes
-          };
-          handleSearch(filters, 1);
-        }
-      });
-    }
+        ...getSearchParams(), 
+        zipCodes: zipCodes && zipCodes.length > 0 ? zipCodes : undefined
+      }
+      handleSearch(filters, 1) // Reset to page 1
+    });
   };
 
   return (
