@@ -6,6 +6,7 @@ interface FormFieldProps {
   label: string;
   type: string;
   placeholder: string;
+  autoComplete: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   disabled?: boolean;
@@ -16,6 +17,7 @@ export default function FormField({
   label,
   type,
   placeholder,
+  autoComplete,
   value,
   onChange,
   disabled = false
@@ -33,6 +35,7 @@ export default function FormField({
         onChange={onChange}
         disabled={disabled}
         className="h-11"
+        autoComplete={autoComplete}
       />
     </div>
   );

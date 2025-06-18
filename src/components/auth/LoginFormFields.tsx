@@ -49,6 +49,7 @@ export default function LoginFormFields() {
         label="Your Name"
         type="text"
         placeholder="Enter your full name"
+        autoComplete="name"
         value={name}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
         disabled={loading}
@@ -59,6 +60,7 @@ export default function LoginFormFields() {
         label="Email Address"
         type="email"
         placeholder="Enter your email"
+        autoComplete="email"
         value={email}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
         disabled={loading}
